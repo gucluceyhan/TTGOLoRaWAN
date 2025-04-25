@@ -2,35 +2,31 @@
 #define DISPLAY_MANAGER_H
 
 #include <Arduino.h>
-#include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include "../Config/AppConfig.h"
+#include <Wire.h>
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+#define OLED_RESET    16 // Reset pin
+#define SCREEN_ADDRESS 0x3C // OLED I2C adresi
 
 class DisplayManager {
 public:
   DisplayManager();
-  
-  // Temel fonksiyonlar
   bool begin();
-  void clear();
-  void display();
-  
-  // Ekran güncelleme fonksiyonları
   void showStartupScreen();
-  void showConnectionStatus(bool isConnected);
-  void showLoRaStatus(const char* status, bool connected);
-  void showSendStatus(const char* message, bool success);
-  void showLastValues(const char* sensorData);
-  
-  // Debug fonksiyonları
-  void showDebugInfo(const char* info);
-  void addLogLine(const char* logLine);
-  
+  void showConnectionStatus(bool connected);
+  void showSendStatus(const char *message, bool success);
+  void showJoinStatus(bool joined);
+  void clear();
+  void turnOn();
+  void turnOff();
+  bool isOn() const;
+
 private:
-  Adafruit_SSD1306* oled;
-  char logLines[4][32]; // Son 4 log satırını saklamak için
-  int currentLogLine;
+  Adafruit_SSD1306 display;
+  bool displayOn;
 };
 
 #endif // DISPLAY_MANAGER_H 
