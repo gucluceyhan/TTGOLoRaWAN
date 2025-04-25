@@ -1,6 +1,6 @@
 #include "../Core/Display/DisplayManager.h"
 
-DisplayManager::DisplayManager() : currentLogLine(0) {
+DisplayManager::DisplayManager() : currentLogLine(0), displayOn(true) {
   oled = new Adafruit_SSD1306(OLED_WIDTH, OLED_HEIGHT, &Wire, -1);
   
   // Log satırlarını başlangıçta temizle
@@ -25,6 +25,7 @@ bool DisplayManager::begin() {
   oled->setTextColor(SSD1306_WHITE);
   oled->setCursor(0, 0);
   oled->cp437(true); // Tam karakter seti kullan
+  displayOn = true;
   
   return true;
 }
@@ -35,10 +36,37 @@ void DisplayManager::clear() {
 }
 
 void DisplayManager::display() {
-  oled->display();
+  if (displayOn) {
+    oled->display();
+  }
+}
+
+// Ekranı açma fonksiyonu
+void DisplayManager::turnOn() {
+  if (!displayOn) {
+    displayOn = true;
+    oled->ssd1306_command(SSD1306_DISPLAYON);
+    Serial.println(F("Ekran açıldı"));
+  }
+}
+
+// Ekranı kapatma fonksiyonu
+void DisplayManager::turnOff() {
+  if (displayOn) {
+    displayOn = false;
+    oled->ssd1306_command(SSD1306_DISPLAYOFF);
+    Serial.println(F("Ekran kapatıldı"));
+  }
+}
+
+// Ekranın durumunu kontrol etme
+bool DisplayManager::isDisplayOn() {
+  return displayOn;
 }
 
 void DisplayManager::showStartupScreen() {
+  if (!displayOn) return;
+  
   clear();
   oled->setTextSize(1);
   oled->setCursor(0, 0);
@@ -58,6 +86,8 @@ void DisplayManager::showStartupScreen() {
 }
 
 void DisplayManager::showConnectionStatus(bool isConnected) {
+  if (!displayOn) return;
+  
   clear();
   oled->setTextSize(1);
   oled->setCursor(0, 0);
@@ -85,6 +115,8 @@ void DisplayManager::showConnectionStatus(bool isConnected) {
 }
 
 void DisplayManager::showLoRaStatus(const char* status, bool connected) {
+  if (!displayOn) return;
+  
   oled->clearDisplay();
   oled->setCursor(0, 0);
   oled->println(F("LoRaWAN Durumu:"));
@@ -102,6 +134,8 @@ void DisplayManager::showLoRaStatus(const char* status, bool connected) {
 }
 
 void DisplayManager::showSendStatus(const char* message, bool success) {
+  if (!displayOn) return;
+  
   oled->clearDisplay();
   oled->setCursor(0, 0);
   oled->println(F("Veri Gonderimi:"));
@@ -119,6 +153,8 @@ void DisplayManager::showSendStatus(const char* message, bool success) {
 }
 
 void DisplayManager::showLastValues(const char* sensorData) {
+  if (!displayOn) return;
+  
   oled->clearDisplay();
   oled->setCursor(0, 0);
   oled->println(F("Son Olcumler:"));
@@ -128,6 +164,8 @@ void DisplayManager::showLastValues(const char* sensorData) {
 }
 
 void DisplayManager::showDebugInfo(const char* info) {
+  if (!displayOn) return;
+  
   oled->clearDisplay();
   oled->setCursor(0, 0);
   oled->println(F("Debug Bilgisi:"));

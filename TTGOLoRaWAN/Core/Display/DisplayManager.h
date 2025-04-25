@@ -27,10 +27,16 @@ public:
   void showDebugInfo(const char* info);
   void addLogLine(const char* logLine);
   
+  // Ekran kontrolü
+  void turnOn();
+  void turnOff();
+  bool isDisplayOn();
+  
 private:
   Adafruit_SSD1306* oled;
   char logLines[4][32]; // Son 4 log satırını saklamak için
   int currentLogLine;
+  bool displayOn;  // Ekranın durumunu takip etmek için
 };
 
 #endif // DISPLAY_MANAGER_H 
